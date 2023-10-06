@@ -13,8 +13,9 @@ public class Server{
 
                 Socket soc=socket.accept(); //accept a connection
                 DataInputStream dataInputStream=new DataInputStream(soc.getInputStream()); // read data from the socket connection (not thread safe, be aware)
+                
                 int groupNum=dataInputStream.readInt(); // group number should be the first thing client sends into the socket connection after iniating the socket connection
-                client=new Client(groupNum); // this will throw an error until client has been updated to take groupNum as a parameter
+                client=new Client(groupNum, soc, dataInputStream); // this will throw an error until client has been updated to take groupNum as a parameter
 
                 // client then needs to be created as a thread
             }
