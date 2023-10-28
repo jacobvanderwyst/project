@@ -5,64 +5,73 @@ import java.util.ArrayList;
 public class ClientHandler implements Runnable{
     public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
     private Socket socket;
-    private int groupNum;
-    private String user;
+    private BufferedReader reader;
+    private BufferedWriter writer;
+    private String[] userAgroup;
 
-    private BufferedInputStream reader;
-    private BufferedOutputStream writer;
-    private BufferedReader rdr;
-    private BufferedWriter wtr;
-    private NewMSG msg=new NewMSG();
-
-    public ClientHandler(Socket soc, String username, int gnum) throws IOException{
+    public ClientHandler(Socket socket) throws IOException{
         try{
-            this.socket = soc;
-
-            this.writer=new BufferedOutputStream(socket.getOutputStream()); //sends bytes
-            this.reader=new BufferedInputStream(socket.getInputStream()); //reads bytes
-            this.rdr=new BufferedReader(new InputStreamReader(socket.getInputStream())); //reads chars
-            this.wtr=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())); //writes chars
-
-            this.user = rdr.readLine();
-            this.groupNum=Integer.parseInt(rdr.readLine());
+            this.socket = socket;
+            this.writer=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            this.reader=new BufferedReader(new InputStreamReader(socket.getInputStream())); // reading and writing chars
+            String user=reader.readLine();
+            this.userAgroup=user.split(" ");
 
             clientHandlers.add(this);
-            
-            /*
-             * msg.setUser(user);
-             * msg.setGroup(groupNum);
-             * msg.setByteMSG(("Server: "+user + " has joined croup " + groupNum).getBytes("UTF-8"));
-             * msg.serverBroadcast(writer);
-            */
-            
-            
+            broadcast("Server: "+userAgroup[0]+" has joined group "+userAgroup[1]);
         }catch(IOException e){
-            disconnect(socket, writer, reader, rdr, wtr);
+            disconnect(socket, reader, writer);
         }
     }
+
     @Override
-    public void run() {
-        byte[] newMSG;
-        String user;
-        int gnum;
+    public void run() { // Listen for messages from client
+        String msg;
 
         while(socket.isConnected()){
             try{
-                byte[] newByteMSG=reader.readAllBytes();
-                user=rdr.readLine();
-                gnum=Integer.parseInt(rdr.readLine());
-
-                msg.setGroup(gnum);
-                msg.setUser(user);
-
-                if(newByteMSG != null || newStringMSG !=null){
-
-                }
-                msg.setByteMSG(newByteMSG);
-                msg.forwardByteMSG(writer);
+                msg=reader.readLine();
+                broadcast(msg);
             }catch(IOException e){
-                e.printStackTrace();
+                disconnect(socket, reader, writer);
+                break;
             }
+        }
+    }
+
+    public void broadcast(String msg){
+        for(ClientHandler clientHandler:clientHandlers){
+            try{
+                if(!clientHandler.userAgroup[0].equals(userAgroup[0])){
+                    clientHandler.writer.write(msg);
+                    clientHandler.writer.newLine();
+                    clientHandler.writer.flush();
+                }
+            }catch(IOException e){
+                disconnect(socket, reader, writer);
+            }
+        }
+    }
+
+    public void removeClientHandler(){
+        clientHandlers.remove(this);
+        broadcast("Server: "+ userAgroup[0]+" has left the chat");
+    }
+
+    public void disconnect(Socket socket, BufferedReader reader, BufferedWriter writer){
+        removeClientHandler();
+        try{
+            if(reader!=null){
+                reader.close();
+            }
+            if(writer!=null){
+                writer.close();
+            }
+            if(socket!=null){
+                socket.close();
+            }
+        }catch(IOException e){
+            e.printStackTrace();
         }
     }
 }

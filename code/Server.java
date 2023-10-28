@@ -13,11 +13,12 @@ public class Server{
             while(!serverSocket.isClosed()){
                 Socket soc=serverSocket.accept(); //accept a connection
                 ClientHandler chandler=new ClientHandler(soc);
-                
+                System.out.println("Client connection established");
+
                 Thread thread=new Thread(chandler);
-        
+                thread.start();
             }
-        }catch(Exception e){
+        }catch(IOException e){
 
         }
     }
@@ -25,6 +26,7 @@ public class Server{
         try{
             if(serverSocket != null){
                 serverSocket.close();
+                System.out.println("Server socket closed");
             }
         }catch(IOException e){
             e.printStackTrace();
