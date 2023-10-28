@@ -32,7 +32,6 @@ public class Client{
                 while(socket.isConnected()){
                     System.out.print(userAgroup+": ");
                     String newMSG=kb.nextLine();
-                    System.out.println();
 
                     writer.write(userAgroup+": "+newMSG);
                     writer.newLine();
@@ -52,7 +51,7 @@ public class Client{
                     while(socket.isConnected()){
                         try{
                             msgGroup=reader.readLine();
-                            System.out.println(msgGroup);
+                            System.out.print("\n"+msgGroup+"\n"+userAgroup+": ");
                         }catch(IOException e){
                             disconnect(socket, reader, writer);
                             break;
@@ -83,7 +82,7 @@ public class Client{
         String userAgroup=kb.nextLine();
         System.out.println();
         
-        Socket socket=new Socket("localhost", 1337);
+        Socket socket=new Socket("localhost", 8008);
         Client client=new Client(socket, userAgroup);
         client.listenMSG(); // start the listener thread
         client.sendMessage(); // listen for messages to send

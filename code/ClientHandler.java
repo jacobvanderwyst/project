@@ -18,7 +18,7 @@ public class ClientHandler implements Runnable{
             this.userAgroup=user.split(" "); // split the username and groupnumber
 
             clientHandlers.add(this);
-            broadcast("Server: "+userAgroup[0]+" has joined group "+userAgroup[1]);
+            broadcast("Server: "+userAgroup[0]+" has joined group "+userAgroup[1]+"\n"+userAgroup[0]+": ");
         }catch(IOException e){
             disconnect(socket, reader, writer);
         }
@@ -58,7 +58,7 @@ public class ClientHandler implements Runnable{
 
     public void removeClientHandler(){
         clientHandlers.remove(this);
-        broadcast("Server: "+ userAgroup[0]+" has left the chat");
+        broadcast("Server: "+ userAgroup[0]+" has left the chat\n"+userAgroup[0]+": ");
     }
 
     public void disconnect(Socket socket, BufferedReader reader, BufferedWriter writer){
@@ -75,6 +75,8 @@ public class ClientHandler implements Runnable{
             }
         }catch(IOException e){
             e.printStackTrace();
+        }finally{
+            System.out.println("Client removed and disconnected Successfully");
         }
     }
 }
