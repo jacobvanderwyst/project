@@ -23,7 +23,7 @@ public class Client{
             }
         }                 
        
-        public void sendMessage() {               //Should be checked for in a loop. Message should be encrypted using the targets public keys and sent to server with the clients group number 
+        public void sendMessage() { 
             try{
                 writer.write(userAgroup);
                 writer.newLine();

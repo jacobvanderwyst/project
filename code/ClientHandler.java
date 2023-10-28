@@ -42,10 +42,13 @@ public class ClientHandler implements Runnable{
     public void broadcast(String msg){
         for(ClientHandler clientHandler:clientHandlers){
             try{
-                if(!clientHandler.userAgroup[0].equals(userAgroup[0])){
-                    clientHandler.writer.write(msg);
-                    clientHandler.writer.newLine();
-                    clientHandler.writer.flush();
+                if(!clientHandler.userAgroup[0].equals(userAgroup[0])){ // Broadcast message to all users accept the client the message originated from
+                    if(clientHandler.userAgroup[1].equals(userAgroup[1])){ // broadcast to all users in the same group as the client the message originated from
+                        clientHandler.writer.write(msg);
+                        clientHandler.writer.newLine();
+                        clientHandler.writer.flush();
+                    }
+                    
                 }
             }catch(IOException e){
                 disconnect(socket, reader, writer);
