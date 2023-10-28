@@ -25,7 +25,7 @@ public class Client{
        
         public void sendMessage() { 
             try{
-                writer.write(userAgroup);
+                writer.write(userAgroup); // send username and groupnumber to server
                 writer.newLine();
                 writer.flush();
 
@@ -62,7 +62,7 @@ public class Client{
             }).start();
         }
 
-        public void disconnect(Socket socket,BufferedReader reader,BufferedWriter writer){                  //Used to exit out of the server by each Client.  
+        public void disconnect(Socket socket,BufferedReader reader,BufferedWriter writer){ // Used to exit out of the server by each Client.  
             try{
                 if(reader!=null){
                     reader.close();
@@ -79,14 +79,14 @@ public class Client{
         }
     public static void main(String[] args) throws UnknownHostException, IOException {
         Scanner kb=new Scanner(System.in);
-        System.out.print("Enter username and group number to connect to server\n\"User groupNum\": ");
+        System.out.print("Enter username and group number to connect to server\n\"User groupNum\": "); // username and group number will be split
         String userAgroup=kb.nextLine();
         System.out.println();
         
         Socket socket=new Socket("localhost", 1337);
         Client client=new Client(socket, userAgroup);
-        client.listenMSG();
-        client.sendMessage();
+        client.listenMSG(); // start the listener thread
+        client.sendMessage(); // listen for messages to send
 
         
     }

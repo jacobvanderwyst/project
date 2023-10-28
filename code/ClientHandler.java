@@ -15,7 +15,7 @@ public class ClientHandler implements Runnable{
             this.writer=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.reader=new BufferedReader(new InputStreamReader(socket.getInputStream())); // reading and writing chars
             String user=reader.readLine();
-            this.userAgroup=user.split(" ");
+            this.userAgroup=user.split(" "); // split the username and groupnumber
 
             clientHandlers.add(this);
             broadcast("Server: "+userAgroup[0]+" has joined group "+userAgroup[1]);

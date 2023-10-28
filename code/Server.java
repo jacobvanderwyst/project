@@ -3,8 +3,7 @@ import java.net.*; // Networking functions
 
 public class Server{
     private ServerSocket serverSocket;
-    BufferedReader iStream;
-
+    
     public Server(ServerSocket socket){
         this.serverSocket = socket;
     }
@@ -19,7 +18,7 @@ public class Server{
                 thread.start();
             }
         }catch(IOException e){
-
+            //e.printStackTrace();
         }
     }
     public void closeServer(){
