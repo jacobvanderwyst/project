@@ -1,7 +1,6 @@
 import java.io.*;
 import java.net.Socket;
 import java.security.*;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 
 import javax.crypto.*;
@@ -12,7 +11,7 @@ public class ClientHandler implements Runnable{
     private Socket socket;
     private BufferedReader reader;
     private BufferedWriter writer;
-    private static String[] userAgroup;
+    private String[] userAgroup;
     private Crypto crypto;
     private IvParameterSpec ivspec;
 
@@ -21,33 +20,20 @@ public class ClientHandler implements Runnable{
             this.socket = socket;
             this.writer=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.reader=new BufferedReader(new InputStreamReader(socket.getInputStream())); // reading and writing chars
-            String tmp=reader.readLine(); // why is this recieving null from client buffer?
-            this.crypto=new Crypto(256, "networking", "salty");
-            
-            
-            System.out.println("input from client "+tmp);
-            crypto.setInput(tmp);
+            String user=reader.readLine();
+            this.userAgroup=user.split(" "); // split the username and groupnumber
             this.ivspec=crypto.getIvspecFile();
-            
-            //String user=crypto.decrypt("AES/CBC/PKCS5Padding", ivspec);
-            //System.out.println(crypto.decrypt("AES/CBC/PKCS5Padding", ivspec)+" user "+user+"\nuser.split(\" \""+user.split(" "));
-            ClientHandler.userAgroup=tmp.split(" "); // split the username and groupnumber
 
             clientHandlers.add(this);
-            
             broadcast("Server: "+userAgroup[0]+" has joined group "+userAgroup[1]+"\n"+userAgroup[0]+": ");
         }catch(IOException e){
             try {
                 disconnect(socket, reader, writer);
-            } catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException
-                    | InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException e1) {
+            } catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException| InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
         } catch (NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (InvalidKeyException e) {

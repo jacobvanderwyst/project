@@ -24,7 +24,8 @@ public class Client{
             this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.kb=new Scanner(System.in);
             this.userAgroup=userAgroup;
-            System.out.println(this.userAgroup);
+
+            //System.out.println(this.userAgroup);
             this.crypto=new Crypto(256, "networking", "salty");
             this.ivspec=crypto.getIvspecFile();
             }catch(IOException e){
@@ -34,13 +35,11 @@ public class Client{
         
         public void sendMessage(){ 
             try{
-                //crypto.setInput(this.userAgroup);
-                //System.out.println("sendMessage "+this.userAgroup+" "+crypto.encrypt("AES/CBC/PKCS5Padding"));\
-                //crypto.encrypt("AES/CBC/PKCS5Padding")
                 writer.write(userAgroup); // send username and groupnumber to server
                 writer.newLine();
                 writer.flush();
-                System.out.println(crypto.encrypt("AES/CBC/PKCS5Padding"));
+
+                System.out.println(userAgroup);
                 while(socket.isConnected()){
                     System.out.print(this.userAgroup+": ");
                     String newMSG=kb.nextLine();
@@ -49,33 +48,9 @@ public class Client{
                     writer.newLine();
                     writer.flush();
                 }
-            }catch(IOException e){
+            }catch(IOException | InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException e){
                 disconnect(socket, reader, writer);
-            } catch (InvalidKeyException e) {
-                // TODO Auto-generated catch block
-                System.out.println("client");
-                e.printStackTrace();
-            } catch (NoSuchPaddingException e) {
-                // TODO Auto-generated catch block
-                System.out.println("client");
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                // TODO Auto-generated catch block
-                System.out.println("client");
-                e.printStackTrace();
-            } catch (InvalidAlgorithmParameterException e) {
-                // TODO Auto-generated catch block
-                System.out.println("client");
-                e.printStackTrace();
-            } catch (BadPaddingException e) {
-                // TODO Auto-generated catch block
-                System.out.println("client");
-                e.printStackTrace();
-            } catch (IllegalBlockSizeException e) {
-                // TODO Auto-generated catch block
-                System.out.println("client");
-                e.printStackTrace();
-            }
+            } 
         }                 
         
         public void listenMSG(){
@@ -89,33 +64,9 @@ public class Client{
                             crypto.setInput(reader.readLine());
                             msgGroup=crypto.decrypt("AES/CBC/PKCS5Padding", ivspec);
                             System.out.print("\n"+msgGroup+"\n"+userAgroup+": ");
-                        }catch(IOException e){
+                        }catch(IOException | InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException e){
                             disconnect(socket, reader, writer);
                             break;
-                        } catch (InvalidKeyException e) {
-                            System.out.println("client");
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (NoSuchPaddingException e) {
-                            // TODO Auto-generated catch block
-                            System.out.println("client");
-                            e.printStackTrace();
-                        } catch (NoSuchAlgorithmException e) {
-                            // TODO Auto-generated catch block
-                            System.out.println("client");
-                            e.printStackTrace();
-                        } catch (InvalidAlgorithmParameterException e) {
-                            // TODO Auto-generated catch block
-                            System.out.println("client");
-                            e.printStackTrace();
-                        } catch (BadPaddingException e) {
-                            // TODO Auto-generated catch block
-                            System.out.println("client");
-                            e.printStackTrace();
-                        } catch (IllegalBlockSizeException e) {
-                            // TODO Auto-generated catch block
-                            System.out.println("client");
-                            e.printStackTrace();
                         }
                     }
                 }
@@ -145,8 +96,8 @@ public class Client{
         
         Socket socket=new Socket("localhost", 8008);
         Client client=new Client(socket, userAgroup);
-        client.sendMessage(); // listen for messages to send
         client.listenMSG(); // start the listener thread
+        client.sendMessage(); // listen for messages to send
         
 
         
