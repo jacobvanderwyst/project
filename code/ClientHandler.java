@@ -61,14 +61,14 @@ public class ClientHandler implements Runnable{
         broadcast("Server: "+ userAgroup[0]+" has left the chat\n"+userAgroup[0]+": ");
     }
 
-    public void disconnect(Socket socket, BufferedReader reader, BufferedWriter writer){
+    public void disconnect(Socket socket, BufferedReader reader2, BufferedWriter writer2){
         removeClientHandler();
         try{
-            if(reader!=null){
-                reader.close();
+            if(reader2!=null){
+                reader2.close();
             }
-            if(writer!=null){
-                writer.close();
+            if(writer2!=null){
+                writer2.close();
             }
             if(socket!=null){
                 socket.close();

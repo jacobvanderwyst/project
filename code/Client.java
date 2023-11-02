@@ -14,8 +14,8 @@ public class Client{
         public Client(Socket socket, String userAgroup){
             try{
             this.socket = socket;
-            this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            this.writer=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            this.reader=new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.kb=new Scanner(System.in);
             this.userAgroup=userAgroup;
             }catch(IOException e){
