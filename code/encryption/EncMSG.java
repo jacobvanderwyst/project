@@ -2,7 +2,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.util.Base64;
-
 import javax.crypto.*;
 
 public class EncMSG{
@@ -30,10 +29,11 @@ public class EncMSG{
     public String decrypt(String encmsg) throws InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException{
         cipher.init(Cipher.DECRYPT_MODE,pikey);
 
-        byte[] encMSGb64decoded=Base64.getDecoder().decode(new String(encmsg).getBytes("UTF-8"));
+        byte[] encMSGb64decoded=Base64.getDecoder().decode(encmsg.getBytes(StandardCharsets.UTF_8));
         byte[] decMSGbytes=cipher.doFinal(encMSGb64decoded);
         
         String dmsg=new String(decMSGbytes, StandardCharsets.UTF_8);
         return dmsg;
     }
+
 }

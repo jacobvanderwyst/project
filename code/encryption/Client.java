@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Scanner;
 import javax.crypto.*;
 
@@ -11,11 +12,13 @@ public class Client{
         private BufferedWriter writer;
         private Scanner kb;
         private String userAgroup;
+
         private PrivateKey pikey;
         private PublicKey pukey;
         private EncMSG encMan;
+        private PublicKey serverPublicKey;
 
-        public Client(Socket socket, String userAgroup) throws NoSuchAlgorithmException, NoSuchPaddingException{
+        public Client(Socket socket, String userAgroup) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException{
             try{
                 this.socket = socket;
                 this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -23,11 +26,16 @@ public class Client{
                 this.kb=new Scanner(System.in);
                 this.userAgroup=userAgroup;
 
-                KeyExchange exchange = new KeyExchange("RSA");
-                this.pikey = exchange.getPrivateKey();
-                this.pukey = exchange.getPublicKey();
+                KeyExchange cliExc = new KeyExchange("DSA", "client");
+                KeyExchange servExchange=new KeyExchange("DSA", "server");
+                cliExc.setPrivate();
+                cliExc.setPublic();
+                
+                this.pikey = cliExc.getPrivateKey();
+                this.pukey = cliExc.getPublicKey();
+                this.serverPublicKey=servExchange.getPublicKey();
 
-                this.encMan=new EncMSG(pikey, pukey, "RSA");
+                this.encMan=new EncMSG(pikey, serverPublicKey, "DSA");
             }catch(IOException e){
                 disconnect(socket, reader, writer);
             }
@@ -39,7 +47,8 @@ public class Client{
 
         public void sendMessage() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException { 
             try{
-                writer.write(userAgroup); // send username and groupnumber to server
+                String eMSG=encMan.encrypt(userAgroup);
+                writer.write(eMSG); // send username and groupnumber to server
                 writer.newLine();
                 writer.flush();
 
@@ -102,7 +111,7 @@ public class Client{
                 e.printStackTrace();
             }
         }
-    public static void main(String[] args) throws UnknownHostException, IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    public static void main(String[] args) throws UnknownHostException, IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException {
         Scanner kb=new Scanner(System.in);
         System.out.print("Enter username and group number to connect to server\n\"User groupNum\": "); // username and group number will be split
         String userAgroup=kb.nextLine();
