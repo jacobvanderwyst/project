@@ -29,9 +29,9 @@ public class ClientHandler implements Runnable{
             crypto.setInput(tmp);
             this.ivspec=crypto.getIvspecFile();
             
-            String user=crypto.decrypt("AES/CBC/PKCS5Padding", ivspec);
-            System.out.println(crypto.decrypt("AES/CBC/PKCS5Padding", ivspec)+" user "+user+"\nuser.split(\" \""+user.split(" "));
-            ClientHandler.userAgroup=user.split(" "); // split the username and groupnumber
+            //String user=crypto.decrypt("AES/CBC/PKCS5Padding", ivspec);
+            //System.out.println(crypto.decrypt("AES/CBC/PKCS5Padding", ivspec)+" user "+user+"\nuser.split(\" \""+user.split(" "));
+            ClientHandler.userAgroup=tmp.split(" "); // split the username and groupnumber
 
             clientHandlers.add(this);
             

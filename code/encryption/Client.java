@@ -34,9 +34,10 @@ public class Client{
         
         public void sendMessage(){ 
             try{
-                crypto.setInput(this.userAgroup);
-                System.out.println("sendMessage "+this.userAgroup+" "+crypto.encrypt("AES/CBC/PKCS5Padding"));
-                writer.write(crypto.encrypt("AES/CBC/PKCS5Padding")); // send username and groupnumber to server
+                //crypto.setInput(this.userAgroup);
+                //System.out.println("sendMessage "+this.userAgroup+" "+crypto.encrypt("AES/CBC/PKCS5Padding"));\
+                //crypto.encrypt("AES/CBC/PKCS5Padding")
+                writer.write(userAgroup); // send username and groupnumber to server
                 writer.newLine();
                 writer.flush();
                 System.out.println(crypto.encrypt("AES/CBC/PKCS5Padding"));
